@@ -140,9 +140,9 @@ export const Skiper67 = () => {
   };
 
   return (
-    <section className="relative flex h-full w-full items-center justify-center bg-[#f5f4f3]">
-      <div className="absolute top-1/4 grid content-start justify-items-center gap-6 text-center">
-        <span className="after:to-foreground relative max-w-[12ch] text-xs uppercase leading-tight opacity-40 after:absolute after:left-1/2 after:top-full after:h-16 after:w-px after:bg-gradient-to-b after:from-transparent after:content-['']">
+    <section className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg bg-[#f5f4f3] dark:bg-zinc-900">
+      <div className="absolute top-6 grid content-start justify-items-center gap-2 text-center">
+        <span className="relative max-w-[12ch] text-xs uppercase leading-tight opacity-40">
           Click the video to play
         </span>
       </div>
@@ -157,11 +157,11 @@ export const Skiper67 = () => {
           opacity.set(0);
         }}
         onClick={() => setShowVideoPopOver(true)}
-        className="size-45"
+        className="relative aspect-video w-full max-w-2xl cursor-pointer overflow-hidden rounded-lg bg-zinc-800"
       >
         <motion.div
           style={{ x, y, opacity }}
-          className="relative z-20 flex w-fit select-none items-center justify-center gap-2 p-2 text-sm text-white mix-blend-exclusion"
+          className="pointer-events-none absolute z-20 flex w-fit select-none items-center justify-center gap-2 p-2 text-sm text-white mix-blend-exclusion"
         >
           <Play className="size-4 fill-white" /> Play
         </motion.div>
@@ -174,6 +174,16 @@ export const Skiper67 = () => {
         >
           <source src="/demo/demo-video.mp4" />
         </video>
+        {!showVideoPopOver && (
+          <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/80">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <Play className="size-8 fill-white text-white" />
+              <span className="text-sm text-zinc-400">
+                Video addition in progress — check back shortly.
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
