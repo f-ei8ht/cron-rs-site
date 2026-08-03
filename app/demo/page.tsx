@@ -18,6 +18,16 @@ export default function DemoPage() {
               playsInline
             />
           </div>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            <a
+              href="https://youtu.be/tW3ivQR0WmE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-4 hover:text-foreground transition-colors"
+            >
+              Watch on YouTube
+            </a>
+          </p>
         </div>
       </main>
       <div className="mx-auto max-w-7xl px-6">
