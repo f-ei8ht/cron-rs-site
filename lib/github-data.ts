@@ -173,6 +173,10 @@ export async function loadSoakResults(): Promise<SoakResults | null> {
 
 const FALLBACK_README = `# robfig-cron-rs
 
+> **[Live project site -> cron-rs-site.vercel.app](https://cron-rs-site.vercel.app/)**
+> Side-by-side Go<->Rust diffs, benchmarks, the 4-hour soak results, and the
+> bug writeups, rendered in the browser.
+
 A faithful Rust port of robfig/cron (v3), the de facto Go cron library.
 
 This is a **Track E** port-mortem exercise: Go -> Rust, motivated by the
@@ -197,10 +201,10 @@ docker run --rm -it robfig-cron-rs             # interactive TUI dashboard
 That lands you in cron-rs-cli, a single-screen dashboard:
 
 - \`t\` runs the 52 integration tests live and shows the summary
-- \`i\` lets you enter any cron expression + RFC3339 "from" time and see
-  the Rust port's Next() side-by-side with the Go original
+- \`i\` focuses the sandbox; \`Tab\` toggles between expr and from; \`Enter\` computes Next()
 - \`f\` runs a 10-second mini fuzz in-process
-- \`b\` runs the four-metric benchmark and surfaces the results inline
+- \`l\` shows the 60s fuzz log summary (cases, divergences) + the docker command for the full log
+- \`b\` runs the four-metric benchmark and shows a compact Rust-vs-Go summary
 - \`q\` quits
 
 Other entry points from the same image:
@@ -210,6 +214,56 @@ docker run --rm robfig-cron-rs cargo test --test port       # 52 integration tes
 docker run --rm robfig-cron-rs ./bench_harness              # benchmarks (Rust + Go side-by-side)
 docker run --rm robfig-cron-rs ./fuzz_harness 60           # 60s differential fuzz
 docker run --rm robfig-cron-rs ./soak_harness --duration 14400 --period-ms 50  # 4h soak
+\`\`\`
+
+## Build (from source, no Docker)
+
+If you have Rust 1.88+ and Go 1.22+ installed:
+
+\`\`\`sh
+# Build all binaries (TUI + bench + soak + fuzz)
+cargo build --release --features "cli,bench"
+
+# Interactive TUI dashboard
+cargo run --release --features cli --bin cron-rs-cli
+
+# Run the 52 integration tests
+cargo test --test port
+
+# Benchmarks (Rust vs Go side-by-side)
+( cd bench-helper && go build -o bench-helper . )
+cargo run --release --features bench --bin bench_harness
+
+# 60s differential fuzz
+( cd fuzz-helper && go build -o go-fuzz-helper . )
+git clone --depth=1 --branch=v3.0.1 https://github.com/robfig/cron ../cron
+cargo run --release --features fuzz --bin fuzz_harness -- 60
+
+# 4-hour soak
+./soak.sh
+# or:
+cargo run --release --features bench --bin soak_harness -- --duration 14400 --period-ms 50
+\`\`\`
+
+## Viewing logs and results
+
+With Docker:
+
+\`\`\`sh
+docker run --rm robfig-cron-rs cat fuzz/log.txt           # 60s fuzz log (204k cases)
+docker run --rm robfig-cron-rs cat bench/results.json      # benchmark results
+docker run --rm robfig-cron-rs cat bench/soak-results.json  # 4h soak summary
+docker run --rm robfig-cron-rs cat bench/soak-results.log   # soak per-minute CSV
+\`\`\`
+
+Without Docker, the files are in the repo after running the harnesses:
+
+\`\`\`sh
+cat fuzz/log.txt              # 60s fuzz log
+cat bench/results.json        # benchmark results
+cat bench/soak-results.json   # 4h soak summary
+head bench/soak-results.log   # soak per-minute CSV
+tail bench/soak-results.log   # last few minutes of the soak
 \`\`\`
 
 ## Benchmarks
@@ -291,6 +345,7 @@ const FALLBACK_PATHS: string[] = [
   "Cargo.toml",
   "DECISIONS.md",
   "Dockerfile",
+  ".dockerignore",
   "README.md",
   "bench-helper/go.mod",
   "bench-helper/main.go",

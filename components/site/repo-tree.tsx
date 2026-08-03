@@ -19,6 +19,7 @@ const rowNotes: Record<string, string> = {
   "fuzz/log.txt": "204,425 cases",
   "src/bin/cli.rs": "tui",
   "Dockerfile": "one command",
+  ".dockerignore": "excludes target/",
 }
 
 export function RepoTree({ paths }: Props) {
