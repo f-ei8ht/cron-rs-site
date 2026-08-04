@@ -41,6 +41,12 @@ export default async function Page() {
           description="Build steps, the judge path, usage as a library, and the migration table from Go."
         >
           <ReadmeViewer markdown={readme} />
+          <div className="mt-6 border-l-2 border-amber-500 bg-muted px-5 py-3 dark:border-amber-400">
+            <p className="text-sm font-semibold text-foreground">Note</p>
+            <code className="mt-1 block text-sm text-muted-foreground">
+              docker run --rm --entrypoint &lt;cmd&gt; robfig-cron-rs
+            </code>
+          </div>
         </Section>
 
         <Section
